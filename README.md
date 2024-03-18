@@ -2,6 +2,7 @@
 
 **What does it do?**
 
+
 - Creates an AWS Lambda function that interacts with AWS Bedrock
 
 - Uses Anthropic's Claude 3 Sonnet model for chat
