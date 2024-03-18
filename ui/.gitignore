@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+*.pyc
+__pycache__/
+*.py[cod]
+*.pyi
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+.eggs/
+develop-eggs/
+dist/
+node_modules
+
+# Environments
+
+.venv
+env/
+venv/
+
+# vscode
+.vscode
+.idea
+.DS_Store
+
+flagged
+*.log
+demo*
+tmp/*
