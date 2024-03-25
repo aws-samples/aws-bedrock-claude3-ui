@@ -11,7 +11,9 @@
 
 - Converts the API of Claude3 model to the OpenAI Chat API format
 
-- Deploy a Chat UI on AWS
+- Deploy a GenAI sample webapp on AWS, encompassing common scenarios like chatbots, text translation, summarization, code generation, image recognition, etc.
+
+**Architecture**
 
   ![0](images/arch.png)
 
@@ -199,19 +201,21 @@ backend wil convert claude response to Openai compatible response message:
 }
 ```
 
-### 2.Deploy ui
+### 2.Deploy GenAI WebApp
 
-1.Config API_SERVER value of .env under ui directory.
+1.Config API_SERVER value of .env under ui directory
 
-2.Build docker image and run ui container
+2.Build docker image and run claude-ui container
 
 ```bash
 docker build -t claude-ui .
 docker run --env-file .env  -p 5006:5006  claude-ui
 ```
 
-![0](images/ui.png)
+3.Enter the address [http://your_conner_ip:5006](#) in browser to access the webapp ui
 
-3.You can also change the API server and Model ID in the settings tab.
+![0](images/ui-chatbot.png)
+
+4.You can change the API server and Model ID from the settings tab
 
 ![setting](images/ui-setting.png)

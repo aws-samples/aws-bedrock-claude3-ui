@@ -41,14 +41,16 @@ app = gr.TabbedInterface(
     [
         chatbox.tab_claude, 
         text.tab_translate, text.tab_rewrite, text.tab_summary, 
+        vision.tab_image, 
         code.tab_code, code.tab_format, 
-        vision.tab_image, tab_setting
+        tab_setting
     ], 
     tab_names= [
         "Chatbot 🤖", 
         "Translate 🇺🇳", "Rewrite ✍🏼", "Summary 📰", 
+        "Vision 👀",
         "Code 💻", "Formatter 🔣", 
-        "Vision 👀", "Setting ⚙️"
+        "Setting ⚙️"
     ],
     title="AI ToolBox",
     theme="Base",
