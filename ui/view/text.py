@@ -17,7 +17,7 @@ tab_translate = gr.Interface(
     examples=[["Across the Great Wall we can reach every corner of the world.", "auto", "zh_CN"]],
     cache_examples=False,
     description="Let me translate the text for you. ",
-    submit_btn= gr.Button("↩️ Run"),
+    submit_btn= gr.Button("▶️ Go", variant='primary'),
     clear_btn=gr.Button("🗑️ Clear")
 )
 
@@ -34,7 +34,7 @@ tab_rewrite = gr.Interface(
     cache_examples=False,
     # live=True,
     description="Let me help you polish the contents. ",
-    submit_btn= gr.Button("↩️ Run"),
+    submit_btn= gr.Button("▶️ Go", variant='primary'),
     clear_btn=gr.Button("🗑️ Clear")
 )
 
@@ -46,6 +46,6 @@ tab_summary = gr.Interface(
     ],
     outputs=gr.Textbox(label="Summary text", lines=6, scale=5),
     description="Let me summary the contents for you. ",
-    submit_btn= gr.Button("↩️ Run"),
+    submit_btn= gr.Button("▶️ Go", variant='primary'),
     clear_btn=gr.Button("🗑️ Clear")
 )

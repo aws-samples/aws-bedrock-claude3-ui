@@ -14,7 +14,7 @@ tab_image = gr.Interface(
     outputs=gr.Textbox(label='Output', lines=15, scale=4),
     # live=True,
     description="I can see 乛◡乛 ",
-    submit_btn= gr.Button("↩️ Go"),
+    submit_btn= gr.Button("▶️ Go", variant='primary'),
     clear_btn=gr.Button("🗑️ Clear")
 )
 

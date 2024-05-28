@@ -29,17 +29,18 @@ def text_translate(text, Source_lang, target_lang):
     
     # Define prompts for text translate
     system_tran = """
-        You are an experienced multilingual translation expert. 
-        Your task is to translate the original text into the target language, and ensure the translated text conforms to native expressions in the target language without grammatical errors.
-        NEVER write anything before the translated text. do not include any other content.
+       	You are a highly skilled translator with expertise in many languages. 
+        Your task is to identify the language of the text I provide and accurately translate it into the specified target language while preserving the meaning, tone, and nuance of the original text. 
+        Please maintain proper grammar, spelling, and punctuation in the translated version, and keep proper nouns such as personal names, brands, and company names in their original form.
+        NEVER output any explanations or tags before the translated text.
         """
     prompt_tran = f"""
-        Translate the original text in to {target_lang} language:
+        Translate the text within <original_text> tags to {target_lang} language:
         <original_text>
         {text}
         </original_text>
         """    
-    message_tran = [format_message(prompt_tran, 'user', 'text')]
+    message_tran = [format_message({"text": prompt_tran}, 'user')]
 
     # Get the llm reply
     resp = gene_content_api(message_tran, system_tran, inference_params, AppConf.model_id)
@@ -68,17 +69,18 @@ def text_rewrite(text, style):
 
     # Define prompts for text rewrite
     system_rewrite = f"""
-        You are an experienced editor, your task is to refine the text provided by the user, making the expression more natural and fluent in the {Source_lang_code} language.
-        You can modify the vocabulary, adjust sentences structure to make it more idiomatic to native speakers. But do not overextend or change the meaning.
-        NEVER write anything before the polished text, do not include anything else.
+        You are an experienced editor with a keen eye for detail and a deep understanding of language, style, and grammar.
+        Your task is to refine and improve the original paragraph provided by user to enhance the overall quality of the text.
+        You can alternate the word choice, sentences structure and phrasing to make the expression more natural and fluent, suitable for the native {Source_lang_code} language speakers.
+        NEVER write any explanations or tags before the refined text.
         """
     prompt_rewrite = f"""
-        Polish following original paragraph in a {style} manner:
+        Rewrite the text within <original_paragraph> tags in a {style} manner:
         <original_paragraph>
         {text}
         </original_paragraph>
         """    
-    message_rewrite = [format_message(prompt_rewrite, 'user', 'text')]
+    message_rewrite = [format_message({"text": prompt_rewrite}, 'user')]
 
     # Get the llm reply
     resp = gene_content_api(message_rewrite, system_rewrite, inference_params, AppConf.model_id)
@@ -93,16 +95,22 @@ def text_summary(text):
 
     # Define prompts for text summary
     system_sum = """
-        You are a senior editor. Your task is to summarize the text provided by users without losing any important information.
-        NEVER write anything before the summary text, do not include any other content.
+        You are a highly capable text summarization assistant. Your task is to summarize the given text comprehensively and faithfully.
+        Here are some guidelines for your summary:
+        1. Analyze the original text to determine its primary language, and provide a summary in that language.
+        2. Start with a one-sentence overview, then break it down by section, identifying key points, evidence and conclusions. 
+        3. Aim for around 20% of the original text length, adjusting as needed based on the complexity and density of information.
+        4. Use your own words where possible, but retain important verbatim quotes or terms that are critical to the meaning.
+        5. Maintain an objective tone, accurately conveying the core messages and insights while omitting redundant or tangential information.
+        NEVER write any explanations or tags before the summary text.
         """
     prompt_sum = f"""
-        Provide a summary for the following text:
+        Provide a comprehensive summary for the text within <original_text> tags according to the guidelines:
         <original_text>
         {text}
         </original_text>
         """    
-    message_sum = [format_message(prompt_sum, 'user', 'text')]
+    message_sum = [format_message({"text": prompt_sum}, 'user')]
 
     # Get the llm reply
     resp = gene_content_api(message_sum, system_sum, inference_params, AppConf.model_id)
