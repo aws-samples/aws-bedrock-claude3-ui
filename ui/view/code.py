@@ -22,7 +22,7 @@ with gr.Blocks() as tab_code:
             output_codes = gr.Code(label="Code", language=lang_format, lines=9)
         with gr.Column(scale=2, min_width=100):
             btn_code_clear = gr.ClearButton([input_requirement, output_codes], value='🗑️ Clear')
-            btn_code_submit = gr.Button(value='⌨️ Generate')
+            btn_code_submit = gr.Button(value="⌨️ Generate", variant='primary')
             btn_code_submit.click(fn=code.gen_code, inputs=[input_requirement, input_lang], outputs=output_codes)            
     with gr.Row():
         error_box = gr.Textbox(label="Error", visible=False)
@@ -44,6 +44,6 @@ tab_format = gr.Interface(
     cache_examples=False,
     # live=True,
     description="A json/yaml formatter...",
-    submit_btn= gr.Button("⌨️ Format"),
+    submit_btn= gr.Button("⌨️ Format", variant='primary'),
     clear_btn=gr.Button("🗑️ Clear")
 )

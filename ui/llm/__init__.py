@@ -4,6 +4,7 @@ import os
 import json
 import requests
 from utils import bedrock, AppConf
+from botocore.exceptions import ClientError
 
 
 # It is recommended to use IAM role authorization
@@ -42,15 +43,33 @@ def moc_chat(name, message, history):
 
 
 # Helper function to pass prompts and inference parameters
-def generate_content(runtime, messages, system, params, model_id):
+def generate_content(messages, system, params, model_id, runtime=bedrock_runtime):
+    """
+    Invokes Bedrock LLM to run inference using the input provided in the request body.
+    https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-runtime/client/invoke_model.html
+
+    :return: Inference response from the model.
+    """
+
     params['system'] = system
     params['messages'] = messages
-    body=json.dumps(params)
-    
-    response = runtime.invoke_model(body=body, modelId=model_id)
-    response_body = json.loads(response.get('body').read())
 
-    return response_body
+    try:
+        response = runtime.invoke_model(
+            modelId=model_id,
+            body=json.dumps(params)
+        )
+
+        resp_body = json.loads(response.get('body').read())
+        return resp_body
+
+    except ClientError as err:
+        print(
+            "Invoke LLM faild. Error code: %s: %s",
+            err.response["Error"]["Code"],
+            err.response["Error"]["Message"],
+        )
+        raise
 
 
 def gene_content_api(messages, system, params, model_id):

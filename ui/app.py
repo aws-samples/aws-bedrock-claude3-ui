@@ -5,17 +5,6 @@ from view import chatbox, code, text, vision
 from utils import common, AppConf
 
 
-# def login(username, password):
-#     if common.verify_user(username, password):
-#         # If a new user logs in, clear the history by default
-#         if username != Login_USER:
-#             claude3.clear_memory()
-#         Login_USER = username 
-#         return True
-#     else:
-#         return False
-
-
 def update_conf(api_server, model_id):
     AppConf.api_server = api_server
     AppConf.model_id = model_id
@@ -52,7 +41,7 @@ app = gr.TabbedInterface(
         "Code 💻", "Formatter 🔣", 
         "Setting ⚙️"
     ],
-    title="AI ToolBox",
+    title="GenAI ToolBox - 懒人工具箱",
     theme="Base",
     css="footer {visibility: hidden}"
     )

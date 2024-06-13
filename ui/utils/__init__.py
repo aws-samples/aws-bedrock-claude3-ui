@@ -2,10 +2,12 @@
 # SPDX-License-Identifier: MIT-0
 """General helper utilities here"""
 # Python Built-Ins:
-from io import StringIO
 import re
 import sys
 import textwrap
+from io import StringIO
+from typing import Literal
+from . import file
 
 
 def print_ww(*args, width: int = 100, **kwargs):
@@ -36,41 +38,43 @@ def format_resp(response:str):
         return response
 
 
-MESSAGE_TYPES = ("text", "image")
+def format_message(message: dict, role: Literal["user", "assistant"] ):
+    '''
+    :input: Multimodal Message Dict
+    {
+        "text": "user input",  
+        "files": ["file_path1", "file_path2", ...]
+    }    
+    '''
 
-def format_message(content, role, msg_type):
-
-    if msg_type not in MESSAGE_TYPES:
-        raise ValueError(f"Invalid message type: {msg_type}")
-
-    match msg_type:
-        case "text":
-            formated_msg = {"role": role, "content": content}
-        case "image":
-            formated_msg = {
-                "role": role,
-                "content": [
-                    {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "image/jpeg",
-                            "data": content
-                        }
-                    },
-                    {
-                        "type": "text",
-                        "text": "Explain the image in detail."
-                    }
-                ]
+    if not message.get('files'):
+        formated_msg = {'role': role, 'content': message.get('text')}
+    else:
+        msg_content = [
+            {
+                "type": "text",
+                "text": message.get('text')
             }
-        case _:                      
-            pass
+        ]
+        
+        file_list = message.get('files')
+        for path in file_list:
+            img_msg = {
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": "image/jpeg",
+                    "data": file.path_to_base64(path)
+                }
+            }
+            msg_content.append(img_msg)
+
+        formated_msg = {'role': role, 'content': msg_content}
 
     return formated_msg
 
 
-class ChatHistory:
+class ChatHistory(object):
     """Abstract class for storing chat message history."""
 
     def __init__(self, initial_history=None):
@@ -82,8 +86,8 @@ class ChatHistory:
         self.messages = []
         if initial_history:
             for user_msg, assistant_msg in initial_history:
-                self.add_user_text(user_msg)
-                self.add_bot_text(assistant_msg)
+                self.add_user_msg({'text': user_msg})
+                self.add_bot_msg({'text': assistant_msg})
 
     def add_message(self, message) -> None:
         """Add a message to the history list"""
@@ -93,19 +97,15 @@ class ChatHistory:
         """Clear memory"""
         self.messages.clear()
 
-    def add_user_text(self, message: str) -> None:
+    def add_user_msg(self, message: dict) -> None:
         self.add_message(
-            format_message(message, "user", 'text')                    
+            format_message(message, "user")
         )
+        # print(f"FULL_History: {self.messages}")
 
-    def add_user_image(self, message: str) -> None:
+    def add_bot_msg(self, message: dict) -> None:
         self.add_message(
-            format_message(message, "user", 'image')                    
-        )
-
-    def add_bot_text(self, message: str) -> None:
-        self.add_message(
-            format_message(message, "assistant", 'text')                    
+            format_message(message, "assistant")
         )
 
     def add_bot_image(self, message: str) -> None:
@@ -115,6 +115,10 @@ class ChatHistory:
 
     def get_latest_message(self):
         return self.messages[-1] if self.messages else None
+
+    def del_latest_message(self):
+        self.messages.pop()
+
 
 class AppConf:
     """
@@ -133,7 +137,7 @@ class AppConf:
     ]
 
     # Variables, initialize with default values.
-    api_server = 'https://fake-url.execute-api.us-east-1.amazonaws.com/prod/v1/messages'
+    api_server = 'https://your-api-endpoint.execute-api.us-east-1.amazonaws.com/prod/v1/messages'
     model_id = 'anthropic.claude-3-sonnet-20240229-v1:0'
 
     def update(self, key, value):

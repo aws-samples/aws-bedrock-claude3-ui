@@ -1,7 +1,7 @@
 # Copyright iX.
 # SPDX-License-Identifier: MIT-0
 import base64
-from utils import AppConf
+from utils import AppConf, file
 from . import gene_content_api
 
 
@@ -19,32 +19,28 @@ inference_params = {
 def analyze_img(img_path, text_prompt):
 
     # Define system prompt base on style
-    system_prompt = "Respond in the corresponding language based on the context of the conversation."
-   
-    if text_prompt == '':
-        text_prompt = "Explain the image in detail."
+    system_prompt = '''
+        Analyze or describe the content of the image(s) according to the user's requirement.
+        Respond in the language onsistent with user or the language specified in the <requirement> tags.
+        '''
 
-    # Read reference image from file and encode as base64 strings.
-    with open(img_path, "rb") as image_file:
-        content_img = base64.b64encode(image_file.read()).decode('utf8')
+    requirement = text_prompt or "Explain the image in detail."
+    msg_content = [
+        {"type": "text", "text": f"<requirement>{requirement}</requirement>" }
+    ]
 
-    formated_msg = {
-        "role": 'user',
-        "content": [
-            {
-                "type": "image",
-                "source": {
-                    "type": "base64",
-                    "media_type": "image/jpeg",
-                    "data": content_img
-                }
-            },
-            {
-                "type": "text",
-                "text": text_prompt
+    msg_content.append(
+        {
+            "type": "image",
+            "source": {
+                "type": "base64",
+                "media_type": "image/jpeg",
+                "data": file.path_to_base64(img_path)
             }
-        ]
-    }
+        }
+    )
+
+    formated_msg = {'role': 'user', 'content': msg_content}
 
     # Get the llm reply
     resp = gene_content_api([formated_msg], system_prompt, inference_params, AppConf.model_id)
