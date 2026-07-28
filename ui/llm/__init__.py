@@ -87,7 +87,7 @@ def gene_content_api(messages, system, params, model_id):
     body=json.dumps(params)
 
     try:
-        response = requests.post(AppConf.api_server, headers=headers, data=body, verify=False)
+        response = requests.post(AppConf.api_server, headers=headers, data=body)
         response.raise_for_status()
         print(response)
         response_text = json.loads(response.text)
